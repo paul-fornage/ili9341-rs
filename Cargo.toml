@@ -13,18 +13,22 @@ edition = "2018"
 
 
 [dependencies]
-display-interface = "0.5"
+display-interface = {version = "0.5", features = ["defmt-03"] }
 embedded-hal = "1.0.0"
 
 [dependencies.embedded-graphics-core]
 optional = true
 version = "0.4"
 
+[dependencies.defmt]
+optional = true
+version = "1.1.0"
+
 [dev-dependencies]
 cortex-m-rtic = "1.0.0"
 cortex-m = "0.7.3"
 cortex-m-rt = "0.7.0"
-defmt-rtt = "0.3.0"
+defmt-rtt = "1.2.0"
 panic-semihosting = "0.6"
 
 [dev-dependencies.stm32f4xx-hal]
@@ -34,6 +38,7 @@ features = ["stm32f411"]
 [features]
 default = ["graphics"]
 graphics = ["embedded-graphics-core"]
+defmt = ["display-interface/defmt-03", "dep:defmt"]
 
 [[example]]
 name = "rtic"

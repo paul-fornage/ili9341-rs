@@ -77,6 +77,7 @@ pub trait Mode {
 
 /// The default implementation of the Mode trait from above
 /// Should work for most (but not all) boards
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Orientation {
     Portrait,
     PortraitFlipped,
@@ -103,6 +104,7 @@ impl Mode for Orientation {
 }
 
 /// Specify state of specific mode of operation
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum ModeState {
     On,
     Off,
@@ -123,6 +125,7 @@ pub enum ModeState {
 /// - As soon as a pixel is received, an internal counter is incremented,
 ///   and the next word will fill the next pixel (the adjacent on the right, or
 ///   the first of the next row if the row ended)
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct Ili9341<IFACE, RESET> {
     interface: IFACE,
     reset: RESET,
@@ -410,6 +413,7 @@ impl<IFACE, RESET> Ili9341<IFACE, RESET> {
 
 /// Scroller must be provided in order to scroll the screen. It can only be obtained
 /// by configuring the screen for scrolling.
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct Scroller {
     top_offset: u16,
     fixed_bottom_lines: u16,
@@ -429,6 +433,7 @@ impl Scroller {
 }
 
 /// Available Adaptive Brightness values
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum AdaptiveBrightness {
     Off = 0x00,
     UserInterfaceImage = 0x01,
@@ -437,6 +442,7 @@ pub enum AdaptiveBrightness {
 }
 
 /// Available frame rate in Hz
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum FrameRate {
     FrameRate119 = 0x10,
     FrameRate112 = 0x11,
@@ -457,6 +463,7 @@ pub enum FrameRate {
 }
 
 /// Frame rate clock division
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum FrameRateClockDivision {
     Fosc = 0x00,
     FoscDiv2 = 0x01,
@@ -465,6 +472,7 @@ pub enum FrameRateClockDivision {
 }
 
 #[derive(Clone, Copy)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 enum Command {
     SoftwareReset = 0x01,
     MemoryAccessControl = 0x36,
