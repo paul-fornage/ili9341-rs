@@ -13,13 +13,13 @@ impl<IFACE, RESET> OriginDimensions for Ili9341<IFACE, RESET> {
 
 impl<IFACE, RESET> DrawTarget for Ili9341<IFACE, RESET>
 where
-    IFACE: display_interface::WriteOnlyDataCommand,
+    IFACE: display_interface::AsyncWriteOnlyDataCommand,
 {
-    type Error = display_interface::DisplayError;
-
     type Color = Rgb565;
 
-    fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+    type Error = display_interface::DisplayError;
+
+    async fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {
@@ -28,13 +28,13 @@ where
                 let x = point.x as u16;
                 let y = point.y as u16;
                 let color = RawU16::from(color).into_inner();
-                self.draw_raw_slice(x, y, x, y, &[color])?;
+                self.draw_raw_slice(x, y, x, y, &[color]).await?;
             }
         }
         Ok(())
     }
 
-    fn fill_contiguous<I>(&mut self, area: &Rectangle, colors: I) -> Result<(), Self::Error>
+    async fn fill_contiguous<I>(&mut self, area: &Rectangle, colors: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Self::Color>,
     {
@@ -57,6 +57,7 @@ where
                         .zip(colors)
                         .map(|(_, color)| RawU16::from(color).into_inner()),
                 )
+                .await
             } else {
                 // Some pixels are on screen
                 self.draw_raw_iter(
@@ -69,6 +70,7 @@ where
                         .filter(|(point, _)| drawable_area.contains(*point))
                         .map(|(_, color)| RawU16::from(color).into_inner()),
                 )
+                .await
             }
         } else {
             // No pixels are on screen
@@ -76,7 +78,7 @@ where
         }
     }
 
-    fn clear(&mut self, color: Self::Color) -> Result<(), Self::Error> {
-        self.clear_screen(RawU16::from(color).into_inner())
+    async fn clear(&mut self, color: Self::Color) -> Result<(), Self::Error> {
+        self.clear_screen(RawU16::from(color).into_inner()).await
     }
 }
